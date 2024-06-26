@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Canvas Line Drawing Example</title>
+<style>
+  /* Optional styling for the canvas */
+  canvas {
+    border: 1px solid #000;
+  }
+</style>
+</head>
+<body>
+<canvas id="myCanvas" width="900" height="500"></canvas>
+
+<script>
+  // Get the canvas element
+  var canvas = document.getElementById('myCanvas');
+  // Get the drawing context
+  var ctx = canvas.getContext('2d');
+
+  // Array to store points
+  var points = [];
+  var lines = []; // Array to store drawn lines
+
+  // Event listener for mouse click to add points
+  canvas.addEventListener('click', function(event) {
+    var rect = canvas.getBoundingClientRect();
+    var x = event.clientX - rect.left;
+    var y = event.clientY - rect.top;
+
+    points.push({ x: x, y: y });
+
+    // Redraw canvas with updated points and lines
+    redraw();
+  });
+
+  // Function to draw a line between two points
+  function drawLine(point1, point2) {
+    ctx.strokeStyle = '#000'; // Black color
+    ctx.lineWidth = 2;
+
+    ctx.beginPath();
+    ctx.moveTo(point1.x, point1.y); // Starting point
+    ctx.lineTo(point2.x, point2.y); // Ending point
+    ctx.stroke();
+
+    // Store the drawn line in the lines array
+    lines.push({ start: point1, end: point2 });
+  }
+
+  // Function to redraw canvas with lines between even indexed points
+  function redraw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Draw lines between even indexed points
+    for (var i = 0; i < points.length - 1; i += 2) {
+      if (i < points.length - 1) {
+        drawLine(points[i], points[i + 1]);
+      }
+    }
+
+    // Draw points and their coordinates
+    ctx.fillStyle = '#FF0000'; // Red color
+    for (var i = 0; i < points.length; i++) {
+      ctx.beginPath();
+      ctx.arc(points[i].x, points[i].y, 5, 0, 2 * Math.PI);
+      ctx.fill();
+
+      // Draw the coordinates
+      ctx.fillStyle = '#000'; // Black color for text
+      ctx.fillText(`(${points[i].x}, ${points[i].y})`, points[i].x + 8, points[i].y - 8);
+      ctx.fillStyle = '#FF0000'; // Reset color for points
+    }
+  }
+</script>
+
+</body>
+</html>
