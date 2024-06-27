@@ -3,16 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Canvas Line Drawing Example</title>
+<title>Straight Line Drawing</title>
 <style>
-  /* Optional styling for the canvas */
   canvas {
     border: 1px solid #000;
+  }
+  #coordinates {
+    margin-top: 10px;
   }
 </style>
 </head>
 <body>
 <canvas id="myCanvas" width="900" height="500"></canvas>
+<div id="coordinates"></div>
 
 <script>
   // Get the canvas element
@@ -34,6 +37,9 @@
 
     // Redraw canvas with updated points and lines
     redraw();
+
+    // Update the coordinates display
+    updateCoordinates();
   });
 
   // Function to draw a line between two points
@@ -61,18 +67,25 @@
       }
     }
 
-    // Draw points and their coordinates
+    // Draw points
     ctx.fillStyle = '#FF0000'; // Red color
     for (var i = 0; i < points.length; i++) {
       ctx.beginPath();
       ctx.arc(points[i].x, points[i].y, 5, 0, 2 * Math.PI);
       ctx.fill();
-
-      // Draw the coordinates
-      ctx.fillStyle = '#000'; // Black color for text
-      ctx.fillText(`(${points[i].x}, ${points[i].y})`, points[i].x + 8, points[i].y - 8);
-      ctx.fillStyle = '#FF0000'; // Reset color for points
     }
+  }
+
+  // Function to update the coordinates display
+  function updateCoordinates() {
+    var coordinatesDiv = document.getElementById('coordinates');
+    coordinatesDiv.innerHTML = ''; // Clear previous content
+
+    points.forEach(function(point, index) {
+      var p = document.createElement('p');
+      p.textContent = `Point ${index + 1}: (${point.x}, ${point.y})`;
+      coordinatesDiv.appendChild(p);
+    });
   }
 </script>
 
