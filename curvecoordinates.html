@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>curve line with Coordinates</title>
+<style>
+  canvas {
+    border: 3px solid black;
+  }
+  #coordinates {
+    margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+<canvas id="myCanvas" width="900" height="500"></canvas>
+<div id="coordinates"></div>
+
+<script>
+  const canvas = document.getElementById('myCanvas');
+  const ctx = canvas.getContext('2d');
+  const coordinatesDiv = document.getElementById('coordinates');
+
+  let points = []; // Array to store clicked points
+
+  // Event listener to get points on canvas click
+  canvas.addEventListener('click', function(event) {
+    let rect = canvas.getBoundingClientRect();
+    let mouseX = event.clientX - rect.left;
+    let mouseY = event.clientY - rect.top;
+
+    points.push({ x: mouseX, y: mouseY });
+    drawPoint(ctx, mouseX, mouseY, 'black');
+    updateCoordinates();
+
+    // Draw a semicircle if there are at least two points
+    if (points.length >= 2 && points.length % 2 === 0) {
+      drawSemicircle(ctx, points[points.length - 2], points[points.length - 1], points.length / 2 % 2 === 0);
+    }
+  });
+
+  // Function to draw a point on canvas
+  function drawPoint(ctx, x, y, color) {
+    ctx.beginPath();
+    ctx.arc(x, y, 3, 0, 2 * Math.PI);
+    ctx.fillStyle = color;
+    ctx.fill();
+  }
+
+  // Function to draw semicircle between two points
+  function drawSemicircle(ctx, point1, point2, isTop) {
+    let centerX = (point1.x + point2.x) / 2;
+    let centerY = (point1.y + point2.y) / 2;
+    let radius = Math.hypot(point2.x - point1.x, point2.y - point1.y) / 2;
+    let startAngle, endAngle;
+
+    if (isTop) {
+      startAngle = Math.atan2(point1.y - centerY, point1.x - centerX);
+      endAngle = startAngle + Math.PI;
+    } else {
+      startAngle = Math.atan2(point2.y - centerY, point2.x - centerX);
+      endAngle = startAngle + Math.PI;
+    }
+
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+    ctx.strokeStyle = 'green';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+  }
+
+  // Function to update the coordinates display
+  function updateCoordinates() {
+    coordinatesDiv.innerHTML = ''; // Clear previous content
+
+    points.forEach(function(point, index) {
+      let p = document.createElement('p');
+      p.textContent = `Point ${index + 1}: (${point.x}, ${point.y})`;
+      coordinatesDiv.appendChild(p);
+    });
+  }
+</script>
+
+</body>
+</html>
